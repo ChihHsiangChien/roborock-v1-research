@@ -6,60 +6,120 @@
 
 ---
 
-## 文件索引
+## 📁 專案結構
 
-### 📋 系統報告
+```
+roborock-v1-research/
+├── README.md              # 本文件
+├── docs/                 # 文件目錄
+│   ├── robot_report.md   # 系統硬體/軟體報告
+│   ├── robot_api.md      # Valetudo REST API 技術文件
+│   ├── robot_sounds.md   # 聲音檔案分析與更換指南
+│   └── cloud_communication.md  # 雲端通訊分析
+├── scripts/              # 腳本工具目錄
+│   ├── control/          # 機器人控制腳本
+│   ├── api/              # API 客戶端
+│   ├── mqtt/             # MQTT 巡航控制
+│   ├── miio/             # MiIO 協定工具
+│   └── visualization/     # 地圖視覺化工具
+├── outputs/              # 輸出結果 (圖片、動畫)
+├── secrets.md            # 敏感資訊 ⚠️
+└── .gitignore
+```
 
-| 檔案 | 說明 |
-|------|------|
-| `robot_report.md` | 完整系統硬體/軟體報告 |
-| `robot_api.md` | Valetudo REST API 技術文件 |
+---
 
-### 🔐 安全與隱私
+## 📋 各目錄說明
 
-| 檔案 | 說明 |
-|------|------|
-| `secrets.md` | 敏感資訊 (金鑰、密碼、SSID) - ⚠️ 請勿上傳 |
-| `cloud_communication.md` | 原本傳送到 Xiaomi 雲端的資料分析 |
-| `.gitignore` | Git 忽略規則 (保護敏感檔案) |
-
-### 🛠️ 控制工具
-
-| 檔案 | 說明 |
-|------|------|
-| `robot_control.sh` | Bash 控制腳本 |
-| `robot_client.py` | Python API 客戶端 |
-
-### 🗺️ 地圖視覺化
-
-| 檔案 | 說明 |
-|------|------|
-| `map_visualizer.py` | 地圖視覺化 Python 腳本 |
-| `robot-map-analysis/` | R 語言地圖分析工具 |
-
-### 🔊 聲音與語音
+### 🛠️ scripts/control/ - 機器人控制腳本
 
 | 檔案 | 說明 |
 |------|------|
-| `robot_sounds.md` | 聲音檔案分析與更換指南 |
+| `robot_control.sh` | 主要控制腳本 (清掃、回充、定位等) |
+| `test_robot_api.sh` | API 測試腳本 |
 
-### 🚀 MQTT 巡航控制
+```bash
+./scripts/control/robot_control.sh status    # 查看狀態
+./scripts/control/robot_control.sh start     # 開始清掃
+./scripts/control/robot_control.sh home      # 返回充電座
+```
+
+### 🌐 scripts/api/ - API 客戶端
 
 | 檔案 | 說明 |
 |------|------|
-| `mqttRover/rover_path_control.py` | 通用路徑控制 (支援方形/八邊形/圓形) |
-| `mqttRover/rover_mqtt_square.py` | 方形巡航控制 |
-| `mqttRover/rover_mqtt_octagon.py` | 八邊形巡航控制 |
-| `mqttRover/clean_coords.py` | MQTT 座標監控工具 |
-| `mqttRover/README.md` | MQTT 巡航使用說明 |
+| `robot_client.py` | Python Valetudo API 客戶端 |
+| `test_api.py` | API 測試腳本 |
 
-### 🔧 MiIO 協定工具
+```bash
+python3 scripts/api/robot_client.py status
+```
+
+### 🚀 scripts/mqtt/ - MQTT 巡航控制
+
+| 檔案 | 說明 |
+|------|------|
+| `rover_path_control.py` | 通用路徑控制 (方形/八邊形/圓形) |
+| `rover_mqtt_square.py` | 方形巡航控制 |
+| `rover_mqtt_octagon.py` | 八邊形巡航控制 |
+| `clean_coords.py` | MQTT 座標監控工具 |
+| `README.md` | 使用說明 |
+
+```bash
+# 需要先安裝依賴
+pip install paho-mqtt requests
+
+# 執行巡航
+python3 scripts/mqtt/rover_path_control.py --shape square --size 80
+```
+
+### 🔧 scripts/miio/ - MiIO 協定工具
 
 | 檔案 | 說明 |
 |------|------|
 | `miio_ping.py` | MiIO 基本 ping/指令工具 |
 | `miio_ping_pro.py` | MiIO 診斷工具 (讀取歷史統計) |
 | `debug_pos.py` | 嘗試讀取機器人座標 (實驗性) |
+
+```bash
+python3 scripts/miio/miio_ping.py
+```
+
+### 🗺️ scripts/visualization/ - 地圖視覺化工具
+
+| 目錄/檔案 | 說明 |
+|------|------|
+| `map_visualizer.py` | Python 地圖視覺化工具 |
+| `robot-map-analysis/` | R 語言地圖分析工具 |
+
+#### Python 版本
+```bash
+curl -s http://192.168.1.51/api/v2/robot/state/map -o map_dump.json
+python3 scripts/visualization/map_visualizer.py map_dump.json -o outputs/map.png
+```
+
+#### R 版本
+```bash
+cd scripts/visualization/robot-map-analysis
+Rscript reconstruct_map.R
+```
+
+R 分析輸出:
+- `spatial_map.png` - 空間地圖
+- `efficiency.png` - 清掃效率
+- `vitals.png` - 電池狀態
+- `animation.gif` - 路徑動畫
+
+---
+
+## 📚 文件 (docs/)
+
+| 檔案 | 說明 |
+|------|------|
+| `robot_report.md` | 完整系統硬體/軟體報告 |
+| `robot_api.md` | Valetudo REST API 技術文件 |
+| `robot_sounds.md` | 聲音檔案分析與更換指南 |
+| `cloud_communication.md` | 原本傳送到 Xiaomi 雲端的資料分析 |
 
 ---
 
@@ -78,68 +138,22 @@ Rscript -e 'install.packages(c("jsonlite", "ggplot2", "dplyr", "tidyr", "gganima
 ### 連線到設備
 
 ```bash
-# SSH (需先設定 ~/.ssh/config)
 ssh robot
-
-# 或直接 IP
+# 或
 ssh root@192.168.1.51
 ```
 
-### 查詢狀態
+### 基本操作
 
 ```bash
-# 方式 1: Bash 腳本
-./robot_control.sh status
+# 查看狀態
+./scripts/control/robot_control.sh status
 
-# 方式 2: 直接 curl
-curl -s http://192.168.1.51/api/v2/robot/state/attributes
-
-# 方式 3: Python
-python3 -c "from robot_client import ValetudoClient; c = ValetudoClient(); c.print_info()"
-```
-
-### 控制命令
-
-```bash
-# 定位機器人
-./robot_control.sh locate
-
-# 開始清掃
-./robot_control.sh start
-
-# 返回充電座
-./robot_control.sh home
-
-# 設定風扇速度
-./robot_control.sh fan max
-```
-
-### 執行巡航路徑
-
-```bash
-# MQTT Broker 需開啟並設定在 localhost
-# 方形巡航
-python3 mqttRover/rover_path_control.py --shape square --size 80
-
-# 八邊形巡航
-python3 mqttRover/rover_path_control.py --shape octagon --size 100
-
-# 圓形巡航 (16邊形)
-python3 mqttRover/rover_path_control.py --shape circle --size 120
-```
-
-### 取得並分析地圖
-
-```bash
-# 下載地圖 JSON
-curl -s http://192.168.1.51/api/v2/robot/state/map -o map_dump.json
-
-# Python 視覺化
-python3 map_visualizer.py map_dump.json -o map_output.png
-
-# R 語言分析 (生成更詳細的報告)
-cd robot-map-analysis
-Rscript reconstruct_map.R
+# 控制機器人
+./scripts/control/robot_control.sh locate    # 定位
+./scripts/control/robot_control.sh start    # 開始清掃
+./scripts/control/robot_control.sh home     # 返回充電座
+./scripts/control/robot_control.sh fan max   # 最大風扇
 ```
 
 ---

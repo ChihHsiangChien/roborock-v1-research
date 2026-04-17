@@ -1,7 +1,8 @@
-# 敏感資料
-# 請勿上傳包含密碼、金鑰、Token 的檔案
+# ===========================================
+# Roborock V1 研究專案 - Git Ignore 規則
+# ===========================================
 
-# 包含敏感資訊的檔案
+# 敏感資料 (請勿上傳)
 secrets.md
 *_secrets.*
 *_credentials.*
@@ -12,62 +13,50 @@ secrets.md
 *.crt
 *.private
 
-# 本地配置文件 (可能包含密碼)
-.local_config.*
-config_local.*
-user_config.*
-
-# 日誌檔案 (可能包含敏感資訊)
-*.log
-logs/
-
-# 從機器人下載的原始資料
-robot_data/
-robot_backups/
-*_robot_*
-
-# 傾印資料 (包含歷史記錄和日誌)
-dump_data/
-blackbox/
-
-# 地圖傾印 (包含位置座標)
-map_dump.json
-map_latest.json
-
-# SSH 設定 (如有自訂)
-.ssh/config
-
 # 環境變數檔案
 .env
 .env.local
 .env.*.local
 
-# 個人化資料庫
-*.db
-*.sqlite
-*.sqlite3
+# 本地配置文件
+.local_config.*
+config_local.*
+user_config.*
 
-# 地圖資料 (可能包含位置資訊)
+# ===========================================
+# 機器人下載資料 (包含位置座標)
+# ===========================================
+map_dump.json
+map_latest.json
 *_map.json
 map_*.json
 *.map
-maps/
 
-# WiFi 設定
-wpa_supplicant.conf
-wifi.conf
-interfaces
+# 傾印資料
+dump_data/
+blackbox/
+robot_data/
+robot_backups/
+*_robot_*
 
-# 設備特定設定
+# 日誌檔案
+*.log
+logs/
+*.rr.bkup
+*.rr.bkup.decrypted
+rrlogs_backup.tar.gz
+
+# 設備設定檔
 device.conf
 device.token
 device.uid
-
-# Valetudo 設定 (包含密碼)
+wpa_supplicant.conf
+wifi.conf
+interfaces
 valetudo_config.json
 valetudo*.json
 
-# 下載的備份
+# 備份檔案
 backup/
 backups/
 *.bak
@@ -76,24 +65,24 @@ backups/
 *.gz
 *.zip
 
-# Blackbox 原始檔案
-*.rr.bkup
-*.rr.bkup.decrypted
+# ===========================================
+# 本地輸出 (可從機器人重新生成)
+# ===========================================
+outputs/
 
-# 大型日誌檔案
-rrlogs_backup.tar.gz
-
-# macOS
+# ===========================================
+# 系統檔案
+# ===========================================
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Linux
 *~
+*.swp
+*.swo
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
+
+# SSH
+.ssh/config
