@@ -26,6 +26,14 @@ robot_data/
 robot_backups/
 *_robot_*
 
+# 傾印資料 (包含歷史記錄和日誌)
+dump_data/
+blackbox/
+
+# 地圖傾印 (包含位置座標)
+map_dump.json
+map_latest.json
+
 # SSH 設定 (如有自訂)
 .ssh/config
 
@@ -67,6 +75,13 @@ backups/
 *.tar
 *.gz
 *.zip
+
+# Blackbox 原始檔案
+*.rr.bkup
+*.rr.bkup.decrypted
+
+# 大型日誌檔案
+rrlogs_backup.tar.gz
 
 # macOS
 .DS_Store

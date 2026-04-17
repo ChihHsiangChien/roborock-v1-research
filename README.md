@@ -12,8 +12,8 @@
 
 | 檔案 | 說明 |
 |------|------|
-| `robot_report.md` | 完整系統硬體/軟體報告 (750 行) |
-| `robot_api.md` | Valetudo REST API 技術文件 (846 行) |
+| `robot_report.md` | 完整系統硬體/軟體報告 |
+| `robot_api.md` | Valetudo REST API 技術文件 |
 
 ### 🔐 安全與隱私
 
@@ -44,9 +44,42 @@
 |------|------|
 | `robot_sounds.md` | 聲音檔案分析與更換指南 |
 
+### 🚀 MQTT 巡航控制
+
+| 檔案 | 說明 |
+|------|------|
+| `mqttRover/rover_path_control.py` | 通用路徑控制 (支援方形/八邊形/圓形) |
+| `mqttRover/rover_mqtt_square.py` | 方形巡航控制 |
+| `mqttRover/rover_mqtt_octagon.py` | 八邊形巡航控制 |
+| `mqttRover/clean_coords.py` | MQTT 座標監控工具 |
+| `mqttRover/README.md` | MQTT 巡航使用說明 |
+
+### 🔧 MiIO 協定工具
+
+| 檔案 | 說明 |
+|------|------|
+| `miio_ping.py` | MiIO 基本 ping/指令工具 |
+| `miio_ping_pro.py` | MiIO 診斷工具 (讀取歷史統計) |
+| `debug_pos.py` | 嘗試讀取機器人座標 (實驗性) |
+
+### 📦 資料傾印
+
+| 檔案 | 說明 |
+|------|------|
+| `dump_data/` | 從機器人傾印的資料 |
+| `blackbox/` | Blackbox 資料庫分析工具 |
+| `dump_data/robot.db` | 清掃歷史資料庫 |
+| `dump_data/rrlog/` | 系統日誌傾印 |
+
 ---
 
 ## 快速開始
+
+### 安裝依賴
+
+```bash
+pip install paho-mqtt requests
+```
 
 ### 連線到設備
 
@@ -87,6 +120,20 @@ python3 -c "from robot_client import ValetudoClient; c = ValetudoClient(); c.pri
 ./robot_control.sh fan max
 ```
 
+### 執行巡航路徑
+
+```bash
+# MQTT Broker 需開啟並設定在 localhost
+#方形巡航
+python3 mqttRover/rover_path_control.py --shape square --size 80
+
+# 八邊形巡航
+python3 mqttRover/rover_path_control.py --shape octagon --size 100
+
+# 圓形巡航 (16邊形)
+python3 mqttRover/rover_path_control.py --shape circle --size 120
+```
+
 ### 取得地圖
 
 ```bash
@@ -105,6 +152,7 @@ python3 map_visualizer.py map.json -o map.png
 |------|-----|
 | Model | Roborock V1 (rockrobo.vacuum.v1) |
 | SoC | Allwinner A33 (ARM Cortex-A7 4-core) |
+| GPU | ARM Mali-400 MP2 |
 | Memory | 510 MB RAM |
 | Storage | 3.8 GB eMMC |
 | WiFi | Realtek RTL8188ES |
@@ -117,6 +165,7 @@ python3 map_visualizer.py map.json -o map.png
 | 22 | TCP | SSH |
 | 80 | TCP | Valetudo Web UI |
 | 54321 | UDP | MiIO (內部) |
+| 1883 | TCP | MQTT (需開啟) |
 
 ### Valetudo Web UI
 
@@ -133,6 +182,7 @@ python3 map_visualizer.py map.json -o map.png
 - **無法讀取原始 LDS 數據**: 只能取得處理過的地圖
 - **磁北方向無 API**: 只能讀取地圖相對角度
 - **MiIO UDP 無法外部訪問**: 需 SSH 代理
+- **MQTT 需啟用**: 巡航控制需要 Valetudo MQTT 功能開啟
 
 ---
 
@@ -157,4 +207,4 @@ Valetudo 已阻斷所有到 Xiaomi 雲端的連線：
 
 ---
 
-*最後更新: 2026-04-16*
+*最後更新: 2026-04-17*
