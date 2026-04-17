@@ -35,8 +35,7 @@
 | 檔案 | 說明 |
 |------|------|
 | `map_visualizer.py` | 地圖視覺化 Python 腳本 |
-| `map_output.png` | 產生的地圖圖片 |
-| `map_dump.json` | 地圖原始資料 |
+| `robot-map-analysis/` | R 語言地圖分析工具 |
 
 ### 🔊 聲音與語音
 
@@ -62,15 +61,6 @@
 | `miio_ping_pro.py` | MiIO 診斷工具 (讀取歷史統計) |
 | `debug_pos.py` | 嘗試讀取機器人座標 (實驗性) |
 
-### 📦 資料傾印
-
-| 檔案 | 說明 |
-|------|------|
-| `dump_data/` | 從機器人傾印的資料 |
-| `blackbox/` | Blackbox 資料庫分析工具 |
-| `dump_data/robot.db` | 清掃歷史資料庫 |
-| `dump_data/rrlog/` | 系統日誌傾印 |
-
 ---
 
 ## 快速開始
@@ -78,7 +68,11 @@
 ### 安裝依賴
 
 ```bash
+# Python 依賴
 pip install paho-mqtt requests
+
+# R 語言依賴 (用於地圖分析)
+Rscript -e 'install.packages(c("jsonlite", "ggplot2", "dplyr", "tidyr", "gganimate", "showtext", "gifski"))'
 ```
 
 ### 連線到設備
@@ -124,7 +118,7 @@ python3 -c "from robot_client import ValetudoClient; c = ValetudoClient(); c.pri
 
 ```bash
 # MQTT Broker 需開啟並設定在 localhost
-#方形巡航
+# 方形巡航
 python3 mqttRover/rover_path_control.py --shape square --size 80
 
 # 八邊形巡航
@@ -134,14 +128,18 @@ python3 mqttRover/rover_path_control.py --shape octagon --size 100
 python3 mqttRover/rover_path_control.py --shape circle --size 120
 ```
 
-### 取得地圖
+### 取得並分析地圖
 
 ```bash
 # 下載地圖 JSON
-curl -s http://192.168.1.51/api/v2/robot/state/map -o map.json
+curl -s http://192.168.1.51/api/v2/robot/state/map -o map_dump.json
 
-# 視覺化
-python3 map_visualizer.py map.json -o map.png
+# Python 視覺化
+python3 map_visualizer.py map_dump.json -o map_output.png
+
+# R 語言分析 (生成更詳細的報告)
+cd robot-map-analysis
+Rscript reconstruct_map.R
 ```
 
 ---
